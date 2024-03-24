@@ -53,6 +53,30 @@ public class GameController {
         //   - the counter of moves in the game should be increased by one
         //     if the player is moved
 
+        Player currentPlayer = board.getCurrentPlayer();
+
+        if (space.getPlayer() == null) { // Check if the given space is empty
+            currentPlayer.setSpace(space); // Move the current player to the given space
+
+            // Find the index of current player
+            int currentPlayerIndex = -1;
+            for (int i = 0; i < board.getPlayersNumber(); i++) {
+                if (board.getPlayer(i) == currentPlayer) {
+                    currentPlayerIndex = i;
+                    break;
+                }
+            }
+
+            // Designate the current player to be the player following the current player
+            int nextPlayerIndex = (currentPlayerIndex + 1) % board.getPlayersNumber();
+            Player nextPlayer = board.getPlayer(nextPlayerIndex);
+            board.setCurrentPlayer(nextPlayer);
+
+            // Increment the move counter
+            int currentMove = board.getMoveCounter();
+            board.setMoveCounter(currentMove + 1);
+        }
+
     }
 
     // XXX: implemented in the current version

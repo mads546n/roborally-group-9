@@ -57,6 +57,19 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
+    private int moveCounter = 0; // Initialize move counter with '0' as initial value
+
+    // Getter-method for move counter
+    public int getMoveCounter() {
+        return moveCounter;
+    }
+
+    // Setter-method for move counter
+    public void setMoveCounter(int moveCounter) {
+        this.moveCounter = moveCounter;
+        notifyChange(); // Notify the observers about the change
+    }
+
     public Board(int width, int height, @NotNull String boardName) {
         this.boardName = boardName;
         this.width = width;
@@ -200,7 +213,7 @@ public class Board extends Subject {
         return getSpace(x, y);
     }
 
-    public String getStatusMessage() {
+    public String getStatusMessage(Player currentPlayer) {
         // This is actually a view aspect, but for making the first task easy for
         // the students, this method gives a string representation of the current
         // status of the game (specifically, it shows the phase, the player and the step)
@@ -211,13 +224,15 @@ public class Board extends Subject {
         //      which is counted up every time a player makes a move; the
         //      status line should show the current player and the number
         //      of the current move!
-        return "Phase: " + getPhase().name() +
-                ", Player = " + getCurrentPlayer().getName() +
-                ", Step: " + getStep();
+        //return "Phase: " + getPhase().name() +
+        //        ", Player = " + getCurrentPlayer().getName() +
+        //        ", Step: " + getStep();
 
         // TODO Task1: add a counter along with a getter and a setter, so the
         //      state of the board (game) contains the number of moves, which then can
-        //      be used to extend the status message 
+        //      be used to extend the status message
+
+        return "Phase: " + getPhase().name() + ", Player: " + ((currentPlayer != null) ? currentPlayer.getName() : "No Player") + ", Move: " + moveCounter;
     }
 
 

@@ -86,7 +86,7 @@ public class BoardView extends VBox implements ViewObserver {
     public void updateView(Subject subject) {
         if (subject == board) {
             Phase phase = board.getPhase();
-            statusLabel.setText(board.getStatusMessage());
+            statusLabel.setText(board.getStatusMessage(board.getCurrentPlayer()));
         }
     }
 
