@@ -72,4 +72,8 @@ public class Space extends Subject {
         notifyChange();
     }
 
+    public String getPosition() {
+        return "( " + x + ", " + y + ")";
+    }
+
 }

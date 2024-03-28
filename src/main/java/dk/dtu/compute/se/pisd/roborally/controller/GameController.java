@@ -85,6 +85,8 @@ public class GameController {
         board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
 
+        activateExecutionButtons();
+
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
             if (player != null) {
@@ -114,8 +116,8 @@ public class GameController {
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
         board.setPhase(Phase.ACTIVATION);
-        board.setCurrentPlayer(board.getPlayer(0));
         board.setStep(0);
+        activateExecutionButtons();
     }
 
     // XXX: implemented in the current version
@@ -144,12 +146,50 @@ public class GameController {
     public void executePrograms() {
         board.setStepMode(false);
         continuePrograms();
+
+        // Execute programming for all the robots in the current game
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player player = board.getPlayer(i);
+            executePlayerProgram(player);
+        }
+
+        // Increment move counter
+        int currentMove = board.getMoveCounter();
+        board.setMoveCounter(currentMove + 1);
+
+        // Switch to next player
+        board.switchToNextPlayer();
+
+        // Activate execution buttons
+        activateExecutionButtons();
+    }
+
+    // Method to assist in executing program for a single player
+    public void executePlayerProgram(Player player) {
+        for (int i = 0; i < Player.NO_REGISTERS; i++) {
+            CommandCard card = player.getProgramField(i).getCard();
+            if (card != null) {
+                executeCommand(player, card.command);
+            }
+        }
+    }
+
+    // Method to execute the current register of the current robot playing
+    public void executeCurrentRegister() {
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player currentPlayer = board.getPlayer(i);
+            CommandCard card = currentPlayer.getProgramField(board.getStep()).getCard();
+            if (card != null) {
+                executeCommand(currentPlayer, card.command);
+            }
+        }
     }
 
     // XXX: implemented in the current version
     public void executeStep() {
         board.setStepMode(true);
         continuePrograms();
+        activateExecutionButtons();
     }
 
     // XXX: implemented in the current version
@@ -221,22 +261,75 @@ public class GameController {
 
     // TODO Task2
     public void moveForward(@NotNull Player player) {
+        // First get the current space the player is standing on
+        Space currentSpace = player.getSpace();
 
+        // Find the "neighbour"-space located in the direction which the current player is moving
+        if (currentSpace != null) {
+            Heading heading = player.getHeading();
+            Space nextSpace = board.getNeighbour(currentSpace, heading);
+
+            if (nextSpace != null && nextSpace.getPlayer() == null) {
+                //Check if the space is empty and move the player accordingly
+                player.setSpace(nextSpace);
+            }
+        }
     }
 
     // TODO Task2
     public void fastForward(@NotNull Player player) {
-
+        // For the sake of simplicity fastForward is implemented similarly to moveForward
+        moveForward(player);
     }
 
     // TODO Task2
     public void turnRight(@NotNull Player player) {
-
+        // Get current heading of player
+        Heading currentHeading = player.getHeading();
+        // Calculate the new heading after former move
+        Heading newHeading = currentHeading.turnClockwise();
+        // Now update the player's new heading
+        player.setHeading(newHeading);
     }
 
     // TODO Task2
     public void turnLeft(@NotNull Player player) {
+        Heading currentHeading = player.getHeading();
+        Heading newHeading = currentHeading.turnCounterClockwise();
+        player.setHeading(newHeading);
+    }
 
+    public void activateExecutionButtons() {
+        Phase phase = board.getPhase();
+
+        // Switch to enable or disable buttons depending on the current phase
+        switch (phase) {
+            case PROGRAMMING:
+                // Enable "Finish Programming"
+                board.setFinishProgramButtonEnabled(true);
+                //Disable "Execute Program" and "Execute Current Register"
+                board.setExecuteProgramButtonEnabled(false);
+                board.setExecuteCurrentRegisterButtonEnabled(false);
+                break;
+
+            case ACTIVATION:
+                // Disable "Finish Programming"
+                board.setFinishProgramButtonEnabled(false);
+
+                // Enable "Execute Program"
+                board.setExecuteProgramButtonEnabled(true);
+
+                // Enable "Execute Current Register"
+                board.setExecuteCurrentRegisterButtonEnabled(true);
+                break;
+
+            default:
+                // If the phase is not recognized as an "actual" phase, disable all buttons
+                board.setFinishProgramButtonEnabled(false);
+                board.setExecuteProgramButtonEnabled(false);
+                board.setExecuteCurrentRegisterButtonEnabled(false);
+                break;
+        }
     }
 
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {

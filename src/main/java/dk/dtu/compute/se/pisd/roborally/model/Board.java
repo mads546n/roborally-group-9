@@ -59,6 +59,38 @@ public class Board extends Subject {
 
     private int moveCounter = 0; // Initialize move counter with '0' as initial value
 
+    private boolean finishProgramButtonEnabled;
+    private boolean executeProgramButtonEnabled;
+    private boolean executeCurrentRegisterButtonEnabled;
+
+    // Getter- and setter methods for all the button states initiated as private booleans
+    public boolean isFinishProgramButtonEnabled() {
+        return finishProgramButtonEnabled;
+    }
+
+    public void setFinishProgramButtonEnabled(boolean enabled) {
+        this.finishProgramButtonEnabled = enabled;
+        notifyChange();
+    }
+
+    public boolean isExecuteProgramButtonEnabled() {
+        return executeProgramButtonEnabled;
+    }
+
+    public void setExecuteProgramButtonEnabled(boolean enabled) {
+        this.executeProgramButtonEnabled = enabled;
+        notifyChange();
+    }
+
+    public boolean isExecuteCurrentRegisterButtonEnabled() {
+        return executeCurrentRegisterButtonEnabled;
+    }
+
+    public void setExecuteCurrentRegisterButtonEnabled(boolean enabled) {
+        this.executeCurrentRegisterButtonEnabled = enabled;
+        notifyChange();
+    }
+
     // Getter-method for move counter
     public int getMoveCounter() {
         return moveCounter;
@@ -139,6 +171,13 @@ public class Board extends Subject {
             this.current = player;
             notifyChange();
         }
+    }
+
+    // Helper method to ensure program iteratively goes through players when switching phases
+    public void switchToNextPlayer() {
+        int currentPlayerIndex = getPlayerNumber(getCurrentPlayer());
+        int nextIndex = (currentPlayerIndex + 1) % players.size();
+        setCurrentPlayer(players.get(nextIndex));
     }
 
     public Phase getPhase() {
@@ -234,6 +273,4 @@ public class Board extends Subject {
 
         return "Phase: " + getPhase().name() + ", Player: " + ((currentPlayer != null) ? currentPlayer.getName() : "No Player") + ", Move: " + moveCounter;
     }
-
-
 }

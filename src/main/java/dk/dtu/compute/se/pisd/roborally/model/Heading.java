@@ -38,4 +38,35 @@ public enum Heading {
     public Heading prev() {
         return values()[(this.ordinal() + values().length - 1) % values().length];
     }
+
+    // Allows us to determine which direction the robot should point after initiating a move
+    public Heading turnClockwise() {
+        switch (this) {
+            case SOUTH:
+                return WEST;
+            case WEST:
+                return NORTH;
+            case NORTH:
+                return EAST;
+            case EAST:
+                return SOUTH;
+            default:
+                return this;
+        }
+    }
+
+    public Heading turnCounterClockwise() {
+        switch (this) {
+            case SOUTH:
+                return EAST;
+            case EAST:
+                return NORTH;
+            case NORTH:
+                return WEST;
+            case WEST:
+                return SOUTH;
+            default:
+                return this;
+        }
+    }
 }

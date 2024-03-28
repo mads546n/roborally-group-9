@@ -133,4 +133,18 @@ public class Player extends Subject {
         return cards[i];
     }
 
+    public int getNumberOfRegisters() {
+        return program != null ? program.length : 0;
+    }
+
+    private Space position;
+
+    public void setPosition(Space position) {
+        this.position = position;
+        position.setPlayer(this);
+    }
+
+    public Space getPosition() {
+        return position;
+    }
 }
