@@ -158,7 +158,7 @@ public class GameController {
         board.setMoveCounter(currentMove + 1);
 
         // Switch to next player
-        board.switchToNextPlayer();
+        //board.switchToNextPlayer();
 
         // Activate execution buttons
         activateExecutionButtons();
